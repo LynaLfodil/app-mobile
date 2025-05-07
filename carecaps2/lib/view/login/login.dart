@@ -12,43 +12,41 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-  bool isCheck = false;
   @override
   Widget build(BuildContext context) {
-    var media = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Tcolor.white,
-      body: SingleChildScrollView(
-        child: SafeArea(
-          child: Container(
-            height: media.height * 0.9,
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  "Hey there,",
-                  style: TextStyle(color: Tcolor.grey, fontSize: 16),
-                ),
+                const SizedBox(height: 27),
                 Text(
                   "Welcome Back",
                   style: TextStyle(
-                    color: Tcolor.black,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
+                    color: Tcolor.primary2,
+                    fontSize: 18,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-                SizedBox(height: media.width * 0.05),
-                SizedBox(height: media.width * 0.04),
+                const SizedBox(height: 30),
+
+                // Phone field
                 const RoundTextField(
-                  hitText: "Email",
-                  icon: "assets/img/email.png",
-                  keyboardType: TextInputType.emailAddress,
+                  hitText: "Phone number",
+                  icon: "lib/assets/img/icons8-phone-48.png",
+                  keyboardType: TextInputType.phone,
                 ),
-                SizedBox(height: media.width * 0.04),
+                const SizedBox(height: 20),
+
+                // Password field
                 RoundTextField(
                   hitText: "Password",
-                  icon: "assets/img/lock.png",
+                  icon: "lib/assets/img/icons8-lock-24.png",
                   obscureText: true,
                   rigtIcon: TextButton(
                     onPressed: () {},
@@ -57,31 +55,38 @@ class _LoginViewState extends State<LoginView> {
                       width: 20,
                       height: 20,
                       child: Image.asset(
-                        "assets/img/show_password.png",
+                        "lib/assets/img/icons8-eye-48.png",
                         width: 20,
                         height: 20,
                         fit: BoxFit.contain,
-                        color: Tcolor.grey,
+                        color: Tcolor.primary2.withOpacity(0.4),
                       ),
                     ),
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Forgot your password?",
-                      style: TextStyle(
-                        color: Tcolor.grey,
-                        fontSize: 10,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
-                  ],
+                const SizedBox(height: 10),
+
+                Text(
+                  "Forgot your password?",
+                  style: TextStyle(
+                    color: Tcolor.primary,
+                    fontSize: 10,
+                    fontFamily: 'Poppins',
+                    decoration: TextDecoration.underline,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                const Spacer(),
+
+                const SizedBox(height: 40),
+
+                // Login button
                 RoundButton(
                   title: "Login",
+                  type: RoundButtonType.solid,
+                  backgroundColor: Tcolor.primary2,
+                  textColor: Tcolor.white,
+                  fontWeight: FontWeight.normal,
+                  textFontFamily: 'Poppins',
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -91,104 +96,49 @@ class _LoginViewState extends State<LoginView> {
                     );
                   },
                 ),
-                SizedBox(height: media.width * 0.04),
+
+                const SizedBox(height: 20),
+
+                // ✅ Divider with "or"
                 Row(
-                  // crossAxisAlignment: CrossAxisAlignment.,
                   children: [
                     Expanded(
                       child: Container(
                         height: 1,
-                        // ignore: deprecated_member_use
-                        color: Tcolor.grey.withOpacity(0.5),
+                        color: Tcolor.primary2.withOpacity(0.5),
                       ),
                     ),
                     Text(
                       "  Or  ",
-                      style: TextStyle(color: Tcolor.black, fontSize: 12),
+                      style: TextStyle(
+                        color: Tcolor.primary,
+                        fontFamily: 'Poppins',
+                        fontSize: 12,
+                      ),
                     ),
                     Expanded(
                       child: Container(
                         height: 1,
-                        // ignore: deprecated_member_use
-                        color: Tcolor.grey.withOpacity(0.5),
+                        color: Tcolor.primary2.withOpacity(0.5),
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: media.width * 0.04),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        width: 50,
-                        height: 50,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: Tcolor.white,
-                          border: Border.all(
-                            width: 1,
-                            // ignore: deprecated_member_use
-                            color: Tcolor.grey.withOpacity(0.4),
-                          ),
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Image.asset(
-                          "assets/img/google.png",
-                          width: 20,
-                          height: 20,
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: media.width * 0.04),
-                    GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        width: 50,
-                        height: 50,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: Tcolor.white,
-                          border: Border.all(
-                            width: 1,
-                            color: Tcolor.grey.withOpacity(0.4),
-                          ),
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Image.asset(
-                          "assets/img/facebook.png",
-                          width: 20,
-                          height: 20,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: media.width * 0.04),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        "Don’t have an account yet? ",
-                        style: TextStyle(color: Tcolor.black, fontSize: 14),
-                      ),
-                      Text(
-                        "Register",
-                        style: TextStyle(
-                          color: Tcolor.black,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
+
+                const SizedBox(height: 20),
+
+                // ✅ Replaced Google login with clinic instruction
+                Text(
+                  "Don’t have an account?\nAsk your clinic to create one for you.",
+                  style: TextStyle(
+                    color: Tcolor.primary,
+                    fontFamily: 'Poppins',
+                    fontSize: 15,
                   ),
+                  textAlign: TextAlign.center,
                 ),
-                SizedBox(height: media.width * 0.04),
+
+                const SizedBox(height: 30),
               ],
             ),
           ),

@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "1090911852408",
+    "firebase_url": "https://carecaps2-default-rtdb.firebaseio.com",
+    "project_id": "carecaps2",
+    "storage_bucket": "carecaps2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1090911852408:android:f949d16b3ccc5aaf7c5a8d",
+        "android_client_info": {
+          "package_name": "com.example.carecaps2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_O_fJYQ0buw77O9rVN05yhdV46vvjPjU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
