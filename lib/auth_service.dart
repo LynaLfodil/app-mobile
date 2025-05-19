@@ -32,6 +32,20 @@ class AuthService {
     }
   }
 
+  // Update Display Name
+  Future<void> updateDisplayName(String name) async {
+    try {
+      User? user = _auth.currentUser;
+      if (user != null) {
+        await user.updateDisplayName(name);
+        // Reload to ensure updated profile is fetched
+        await user.reload();
+      }
+    } catch (e) {
+      print("Update display name error: $e");
+    }
+  }
+
   // Sign Out
   Future<void> signOut() async {
     await _auth.signOut();

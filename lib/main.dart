@@ -1,8 +1,10 @@
-
 import 'package:carecaps2/view/firebase_options.dart';
+import 'package:carecaps2/view/login/complete_profile_view.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:carecaps2/common/color_extention.dart';
 import 'package:carecaps2/view/on_boarding/on_boarding_view.dart';
+import 'package:carecaps2/view/login/login.dart';
 import 'package:firebase_core/firebase_core.dart';
 // Import all view pages here
 import 'package:carecaps2/view/home/home_view.dart';
@@ -10,21 +12,63 @@ import 'package:carecaps2/view/home/appointments_view.dart';
 import 'package:carecaps2/view/home/medication_view.dart';
 import 'package:carecaps2/view/home/messages_view.dart';
 import 'package:carecaps2/view/home/mrecords_view.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+// ⬇️ Notification-related imports
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+Future<void> initializeNotifications() async {
+  const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+
+  final InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+  );
+
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  tz.initializeTimeZones();
+}
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); 
-  // Required for Firebase
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-  options: DefaultFirebaseOptions.currentPlatform,
-  name: 'SecondaryApp', // Unique name
-); // Initialize Firebase ONCE
-  
-  runApp(MyApp()); // Start your app,
+    options: DefaultFirebaseOptions.currentPlatform,
+    name: 'SecondaryApp',
+  );
+  final prefs = await SharedPreferences.getInstance();
+  final bool onboardingSeen = prefs.getBool('onboarding_seen') ?? false;
+  final bool profileComplete = prefs.getBool('profileComplete') ?? false;
+  // Decide which screen to show first
+  final user = FirebaseAuth.instance.currentUser;
+  Widget initialScreen;
+  if (user != null) {
+    initialScreen =
+        profileComplete
+            ? const HomeView()
+            : const CompleteProfileView(); // already logged in
+  } else if (onboardingSeen) {
+    initialScreen = const LoginView(); // seen onboarding but not logged in
+  } else {
+    initialScreen = const OnBoardingView(); // first time opening the app
+  }
+  await initializeNotifications(); // ⬅️ Notification initialization
+
+  print('▶ Project ID: ${Firebase.app().options.projectId}');
+  print('🔑 Signed-in UID: ${FirebaseAuth.instance.currentUser?.uid}');
+
+  runApp(MyApp(initialScreen: initialScreen));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final Widget initialScreen;
+
+  const MyApp({super.key, required this.initialScreen});
 
   @override
   Widget build(BuildContext context) {
@@ -36,9 +80,11 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: const Color(0xFFE4F0F0),
         useMaterial3: true,
       ),
-      home: const OnBoardingView(),
+      home: initialScreen,
       routes: {
         '/home': (context) => const MainNavigation(),
+        '/login': (context) => const LoginView(),
+        '/onboarding': (context) => const OnBoardingView(),
       },
     );
   }
@@ -59,7 +105,7 @@ class _MainNavigationState extends State<MainNavigation> {
     const MedicationView(),
     MessagesView(),
     const RecordsView(),
-    const AppointmentsView(),    
+    const AppointmentsView(),
   ];
 
   @override
@@ -84,7 +130,10 @@ class _MainNavigationState extends State<MainNavigation> {
     );
   }
 
-  BottomNavigationBarItem _buildItem({required IconData icon, required int index}) {
+  BottomNavigationBarItem _buildItem({
+    required IconData icon,
+    required int index,
+  }) {
     bool isSelected = currentPage == index;
     return BottomNavigationBarItem(
       label: '',

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../common/color_extention.dart';
 import '../login/login.dart';
 
@@ -23,6 +23,11 @@ class _OnBoardingViewState extends State<OnBoardingView> {
         selectPage = controller.page?.round() ?? 0;
       });
     });
+  }
+
+  Future<void> _markOnboardingSeen() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('onboarding_seen', true);
   }
 
   final List<Map<String, dynamic>> pages = [
@@ -65,11 +70,10 @@ class _OnBoardingViewState extends State<OnBoardingView> {
                 controller: controller,
                 itemCount: pages.length,
                 physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) => _buildPageContent(pages[index]),
+                itemBuilder: (context, index) =>
+                    _buildPageContent(pages[index]),
               ),
             ),
-
-            // Buttons Section
             if (selectPage < pages.length - 1) ...[
               const SizedBox(height: 10),
               Row(
@@ -109,11 +113,21 @@ class _OnBoardingViewState extends State<OnBoardingView> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 30, vertical: 12),
                     ),
-                    onPressed: () {
-                      controller.nextPage(
-                        duration: const Duration(milliseconds: 500),
-                        curve: Curves.easeOut,
-                      );
+                    onPressed: () async {
+                      if (selectPage == pages.length - 2) {
+                        await _markOnboardingSeen();
+                        if (!mounted) return;
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const LoginView()),
+                        );
+                      } else {
+                        controller.nextPage(
+                          duration: const Duration(milliseconds: 500),
+                          curve: Curves.easeOut,
+                        );
+                      }
                     },
                     child: Text(
                       selectPage == pages.length - 2 ? "Get Started" : "Next",
@@ -186,13 +200,15 @@ class _OnBoardingViewState extends State<OnBoardingView> {
                   margin: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: Tcolor.secondary.withOpacity(0.5),
-                    border: Border.all(color: Tcolor.secondary.withOpacity(0.5)),
+                    border: Border.all(
+                        color: Tcolor.secondary.withOpacity(0.5)),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset("lib/assets/img/Asset 5.png", width: 40, height: 40),
+                      Image.asset("lib/assets/img/Asset 5.png",
+                          width: 40, height: 40),
                       const SizedBox(width: 15),
                       const Text("Doctor",
                           style: TextStyle(
@@ -204,8 +220,13 @@ class _OnBoardingViewState extends State<OnBoardingView> {
                 ),
               ),
               GestureDetector(
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => const LoginView()));
+                onTap: () async {
+                  await _markOnboardingSeen();
+                  if (!mounted) return;
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (_) => const LoginView()),
+                  );
                 },
                 child: Container(
                   padding: const EdgeInsets.all(16),
@@ -218,7 +239,8 @@ class _OnBoardingViewState extends State<OnBoardingView> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset("lib/assets/img/Asset 2.png", width: 40, height: 40),
+                      Image.asset("lib/assets/img/Asset 2.png",
+                          width: 40, height: 40),
                       const SizedBox(width: 10),
                       const Text("Patient",
                           style: TextStyle(
@@ -251,13 +273,15 @@ class _OnBoardingViewState extends State<OnBoardingView> {
             ),
           ),
         const SizedBox(height: 16),
-        if (pObj["image"] != null && pObj["image"].toString().endsWith('.svg'))
+        if (pObj["image"] != null &&
+            pObj["image"].toString().endsWith('.svg'))
           SvgPicture.asset(
             pObj["image"],
             width: 150,
             height: 150,
             fit: BoxFit.contain,
-            placeholderBuilder: (_) => const CircularProgressIndicator(),
+            placeholderBuilder: (_) =>
+                const CircularProgressIndicator(),
           )
         else if (pObj["image"] != null)
           Image.asset(
@@ -292,23 +316,27 @@ class _OnBoardingViewState extends State<OnBoardingView> {
         ),
         const SizedBox(height: 40),
         if (selectPage < 3)
-  TextButton(
-    onPressed: () {
-      Navigator.push(context, MaterialPageRoute(builder: (_) => const LoginView()));
-    },
-    child: Text(
-      "Skip",
-      style: TextStyle(
-        color: Colors.grey,
-        fontSize: 14,
-        fontFamily: 'poppins',
-        decoration: TextDecoration.underline,
-        fontWeight: FontWeight.w500,
-      ),
-    ),
-  ),
-
-       
+          TextButton(
+            onPressed: () async {
+              await _markOnboardingSeen();
+              if (!mounted) return;
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const LoginView()),
+              );
+            },
+            child: const Text(
+              "Skip",
+              style: TextStyle(
+                color: Colors.grey,
+                fontSize: 14,
+                fontFamily: 'poppins',
+                decoration: TextDecoration.underline,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        const Spacer(),
       ],
     );
   }
