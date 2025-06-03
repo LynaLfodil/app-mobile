@@ -82,7 +82,7 @@ class _LoginViewState extends State<LoginView> {
                 const SizedBox(height: 30),
                 RoundTextField(controller: _emailController, hitText: "Email", icon: "lib/assets/img/icons8-email-24.png", keyboardType: TextInputType.emailAddress, hintText: 'Example@mail.com', rigtIcon: TextButton(onPressed: () {}, child: const Text(''))),
                 const SizedBox(height: 0),
-                RoundTextField(controller: _passwordController, hitText: "Password", icon: "lib/assets/img/icons8-lock-24.png", obscureText: true, rigtIcon: TextButton(onPressed: () {}, child: Container(width:20,height:20,child: Image.asset("lib/assets/img/icons8-eye-48.png", color: Tcolor.primary2.withOpacity(0.4),))), hintText: 'password',), 
+                RoundTextField(controller: _passwordController, hitText: "Password", icon: "lib/assets/img/icons8-lock-24.png", obscureText: true, rigtIcon: TextButton(onPressed: () {}, child: SizedBox(width:20,height:20,child: Image.asset("lib/assets/img/icons8-eye-48.png", color: Tcolor.primary2.withOpacity(0.4),))), hintText: 'password',), 
                 const SizedBox(height: 10),
                 if (_errorMessage.isNotEmpty) Padding(padding: const EdgeInsets.only(bottom:10), child: Text(_errorMessage, style: const TextStyle(color: Colors.red, fontSize:12))),
                 Text("Forgot your password?", style: TextStyle(color: Tcolor.primary, fontSize:10, decoration: TextDecoration.underline)),

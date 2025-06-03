@@ -11,10 +11,7 @@ class BlogView extends StatelessWidget {
         backgroundColor: const Color(0xFF23414E),
         title: const Text(
           'Health Blog',
-          style: TextStyle(
-            fontFamily: "Poppins",
-            color: Color(0xFFB9E7F0),
-          ),
+          style: TextStyle(fontFamily: "Poppins", color: Color(0xFFB9E7F0)),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Color(0xFFB9E7F0)),
@@ -128,11 +125,7 @@ class BlogView extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              size: 36,
-              color: Colors.white.withOpacity(0.9),
-            ),
+            Icon(icon, size: 36, color: Colors.white.withOpacity(0.9)),
             const SizedBox(height: 10),
             Text(
               title,
@@ -153,9 +146,7 @@ class BlogView extends StatelessWidget {
   void _navigateToAdvice(BuildContext context, String topic) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => AdviceDetailView(topic: topic),
-      ),
+      MaterialPageRoute(builder: (context) => AdviceDetailView(topic: topic)),
     );
   }
 }
@@ -169,7 +160,8 @@ class AdviceDetailView extends StatelessWidget {
   Widget build(BuildContext context) {
     final Map<String, Map<String, dynamic>> adviceData = {
       'Diabetes Diet': {
-        'image': 'assets/diabetes.jpg', // Replace with your image
+        'image':
+            'lib/assets/img/diabetes.jpg', // Replace with your image
         'content': '''
 1. Choose healthy carbohydrates like fruits, vegetables, whole grains, and legumes.
 2. Eat fiber-rich foods to help control blood sugar.
@@ -179,7 +171,8 @@ class AdviceDetailView extends StatelessWidget {
 ''',
       },
       'Pregnancy Care': {
-        'image': 'lib/assets/img/undraw_expecting_j6le.png', // Replace with your image
+        'image':
+            'lib/assets/img/pregnant.jpg', // Replace with your image
         'content': '''
 1. Take prenatal vitamins with folic acid.
 2. Exercise regularly with doctor's approval.
@@ -189,7 +182,8 @@ class AdviceDetailView extends StatelessWidget {
 ''',
       },
       'Heart Health': {
-        'image': 'assets/heart.jpg', // Replace with your image
+        'image':
+            'lib/assets/img/heart.jpg', // Replace with your image
         'content': '''
 1. Eat a diet rich in fruits, vegetables, and whole grains.
 2. Limit saturated fats, trans fats, and sodium.
@@ -199,7 +193,8 @@ class AdviceDetailView extends StatelessWidget {
 ''',
       },
       'Mental Wellness': {
-        'image': 'assets/mental.jpg', // Replace with your image
+        'image':
+            'lib/assets/img/mental.jpg', // Replace with your image
         'content': '''
 1. Practice mindfulness and meditation.
 2. Stay connected with friends and family.
@@ -209,7 +204,7 @@ class AdviceDetailView extends StatelessWidget {
 ''',
       },
       'Exercise Tips': {
-        'image': 'lib/assets/img/undraw_indoor-bike_9lxj.png', // Replace with your image
+        'image': 'lib/assets/img/sport.jpg', // Replace with your image
         'content': '''
 1. Start slowly and gradually increase intensity.
 2. Find activities you enjoy to stay motivated.
@@ -219,7 +214,8 @@ class AdviceDetailView extends StatelessWidget {
 ''',
       },
       'Sleep Hygiene': {
-        'image': 'assets/sleep.jpg', // Replace with your image
+        'image':
+            'lib/assets/img/sleep.jpg', // Replace with your image
         'content': '''
 1. Maintain a consistent sleep schedule.
 2. Create a relaxing bedtime routine.
@@ -230,10 +226,12 @@ class AdviceDetailView extends StatelessWidget {
       },
     };
 
-    final data = adviceData[topic] ?? {
-      'image': 'assets/default.jpg',
-      'content': 'No advice available for this topic.'
-    };
+    final data =
+        adviceData[topic] ??
+        {
+          'image': 'assets/default.jpg',
+          'content': 'No advice available for this topic.',
+        };
 
     return Scaffold(
       appBar: AppBar(
@@ -255,11 +253,8 @@ class AdviceDetailView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             AspectRatio(
-              aspectRatio: 16/9,
-              child: Image.asset(
-                data['image'],
-                fit: BoxFit.cover,
-              ),
+              aspectRatio: 16 / 9,
+              child: Image.asset(data['image'], fit: BoxFit.cover),
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -286,7 +281,7 @@ class AdviceDetailView extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
                   Image.asset(
-                    'assets/doctor_advice.jpg', // Add an image between advice and disclaimer
+                    'lib/assets/img/Votre texte de paragraphe.png', // Add an image between advice and disclaimer
                     fit: BoxFit.cover,
                   ),
                   const SizedBox(height: 24),

@@ -12,7 +12,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:android_intent_plus/flag.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -363,9 +362,7 @@ Future<void> showReminderNotification({
                     final nextMedTime = nextDoseTimes.isNotEmpty
                         ? nextDoseTimes.first
                         : null;
-                    final diff = nextMedTime != null
-                        ? nextMedTime.difference(now)
-                        : null;
+                    final diff = nextMedTime?.difference(now);
 
                     return Column(
                       children: [

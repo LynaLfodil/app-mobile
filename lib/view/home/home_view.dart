@@ -1,11 +1,14 @@
 // lib/view/home/home_view.dart
+
 import 'package:flutter/material.dart';
 import 'package:carecaps2/common/color_extention.dart';
-import 'package:carecaps2/services/firestore_service.dart';
+import 'package:carecaps2/services/firestore_service.dart';   
+import 'package:carecaps2/view/lib/models/medication.dart';    // <-- FirestoreService + its Appointment
 import 'package:carecaps2/view/login/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'appointments_view.dart';
 import 'medication_view.dart';
@@ -13,10 +16,6 @@ import 'messages_view.dart';
 import 'mrecords_view.dart';
 import 'settings_view.dart';
 import 'blog_view.dart';
-import 'qr_medical_record_view.dart';
-
-// Models (for type annotations)
-import 'package:carecaps2/view/lib/models/medication.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -81,8 +80,7 @@ class _HomeViewState extends State<HomeView> {
         child: Icon(
           icon,
           size: 26,
-          color:
-              isSelected ? const Color(0xFF103947) : const Color(0xFFB9E7F0),
+          color: isSelected ? const Color(0xFF103947) : const Color(0xFFB9E7F0),
         ),
       ),
     );
@@ -215,85 +213,136 @@ class _HomeContentState extends State<HomeContent> {
     );
   }
 
+  /// Whenever the user long‐presses (≈3 seconds) **anywhere** on this page,
+  /// this function will be called, popping up the “Emergency” dialog.
+  void _onLongPressAnywhere(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: const Color.fromARGB(208, 213, 155, 145),
+        title: const Text("Emergency"),
+        content: const Text("Call emergency number 16?"),
+        contentTextStyle: const TextStyle(
+            fontSize: 16,
+            fontFamily: "Poppins",
+            color: Color.fromARGB(255, 86, 38, 38)),
+        titleTextStyle: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            fontFamily: "Poppins",
+            color: const Color.fromARGB(255, 104, 20, 20)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(), // just close dialog
+            child: const Text(
+              "Cancel",
+              style: TextStyle(color: Colors.white , fontFamily: "Poppins"),
+            ),
+          ),
+        
+          TextButton(
+            onPressed: () async {
+              Navigator.of(context).pop(); // close the dialog first
+              final uri = Uri(scheme: 'tel', path: '16');
+              if (await canLaunchUrl(uri)) {
+                await launchUrl(uri);
+              } else {
+                // Could not launch phone dialer
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Could not launch phone dialer.", style: TextStyle(color: Colors.white , fontFamily: "Poppins"),)),
+                );
+              }
+            },
+            child: const Text("Call 16" , style: TextStyle(color: Colors.white , fontFamily: "Poppins"),),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Column(children: [
-          // Greeting + menu
-          Row(children: [
+    // Wrap the entire contents in a GestureDetector that listens for a long press.
+    return GestureDetector(
+      onLongPress: () => _onLongPressAnywhere(context),
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Column(children: [
+            // Greeting + menu
+            Row(children: [
+              Expanded(
+                child: Text('Hello, $_userName',
+                    style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: "Poppins",
+                        color: Color(0xFF23414E))),
+              ),
+              PopupMenuButton<String>(
+                icon: const Icon(Icons.menu, color: Color(0xFF23414E)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15)),
+                color: const Color.fromARGB(255, 177, 199, 210),
+                elevation: 8,
+                onSelected: (v) async {
+                  switch (v) {
+                    case 'Settings':
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const SettingsView()));
+                      break;
+                    case 'Blog':
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (_) => const BlogView()));
+                      break;
+                    case 'QR':
+                      _showQRPopup(context);
+                      break;
+                    case 'Logout':
+                      await FirebaseAuth.instance.signOut();
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const LoginView()));
+                      break;
+                  }
+                },
+                itemBuilder: (_) => [
+                  _buildMenuItem("Settings", Icons.settings),
+                  _buildMenuItem("Blog", Icons.article),
+                  _buildMenuItem("QR", Icons.qr_code),
+                  _buildMenuItem("Logout", Icons.logout),
+                ],
+              ),
+            ]),
+            const SizedBox(height: 20),
+
+            // Main content
             Expanded(
-              child: Text('Hello, $_userName',
-                  style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: "Poppins",
-                      color: Color(0xFF23414E))),
-            ),
-            PopupMenuButton<String>(
-              icon: const Icon(Icons.menu, color: Color(0xFF23414E)),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15)),
-              color: const Color.fromARGB(255, 177, 199, 210),
-              elevation: 8,
-              onSelected: (v) async {
-                switch (v) {
-                  case 'Settings':
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => const SettingsView()));
-                    break;
-                  case 'Blog':
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (_) => const BlogView()));
-                    break;
-                  case 'QR':
-                    _showQRPopup(context);
-                    break;
-                  case 'Logout':
-                    await FirebaseAuth.instance.signOut();
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => const LoginView()));
-                    break;
-                }
-              },
-              itemBuilder: (_) => [
-                _buildMenuItem("Settings", Icons.settings),
-                _buildMenuItem("Blog", Icons.article),
-                _buildMenuItem("QR", Icons.qr_code),
-                _buildMenuItem("Logout", Icons.logout),
-              ],
+              child: ListView(children: [
+                // Health summary
+                _HealthSummaryCard(
+                    bloodType: _bloodType,
+                    bmi: _bmi,
+                    disease: _disease,
+                    phone: _phone),
+                const SizedBox(height: 30),
+
+                // ——— DYNAMIC Upcoming appointments ———
+                _DynamicAppointmentsSection(
+                  onGoToAppointments: widget.onGoToAppointments,
+                  dateFormatter: _dateFmt,
+                ),
+                const SizedBox(height: 30),
+
+                // ——— DYNAMIC Today’s medication ———
+                const _DynamicMedicationsSection(),
+              ]),
             ),
           ]),
-          const SizedBox(height: 20),
-
-          // Main content
-          Expanded(
-            child: ListView(children: [
-              // Health summary
-              _HealthSummaryCard(
-                  bloodType: _bloodType,
-                  bmi: _bmi,
-                  disease: _disease,
-                  phone: _phone),
-              const SizedBox(height: 30),
-
-              // ——— DYNAMIC Upcoming appointments ———
-              _DynamicAppointmentsSection(
-                onGoToAppointments: widget.onGoToAppointments,
-                dateFormatter: _dateFmt,
-              ),
-              const SizedBox(height: 30),
-
-              // ——— DYNAMIC Today’s medication ———
-              const _DynamicMedicationsSection(),
-            ]),
-          ),
-        ]),
+        ),
       ),
     );
   }
@@ -397,6 +446,7 @@ class _DynamicAppointmentsSection extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
           ),
           child: StreamBuilder<List<Appointment>>(
+            // Now uses FirestoreService’s Appointment type directly:
             stream: FirestoreService().streamAppointments(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -417,7 +467,7 @@ class _DynamicAppointmentsSection extends StatelessWidget {
               final allApps = snapshot.data ?? [];
               final now = DateTime.now();
 
-              // Filter only appointments after "now"
+              // Filter only appointments after “now”
               final upcoming = allApps.where((a) => a.date.isAfter(now)).toList();
 
               if (upcoming.isEmpty) {
@@ -436,7 +486,7 @@ class _DynamicAppointmentsSection extends StatelessWidget {
               }
 
               // Sort by earliest date
-              upcoming.sort((a, b) => a.date.compareTo(b!.date));
+              upcoming.sort((a, b) => a.date.compareTo(b.date));
               final nextApp = upcoming.first;
 
               return IntrinsicHeight(
@@ -444,11 +494,11 @@ class _DynamicAppointmentsSection extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Column(
-                      children: [
-                        const Icon(Icons.calendar_month,
+                      children: const [
+                        Icon(Icons.calendar_month,
                             size: 30, color: Color(0xFF23414E)),
-                        const SizedBox(height: 34),
-                        const Icon(Icons.access_time,
+                        SizedBox(height: 34),
+                        Icon(Icons.access_time,
                             size: 24, color: Color(0xFF23414E)),
                       ],
                     ),
@@ -476,8 +526,7 @@ class _DynamicAppointmentsSection extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            // format date + timeString
-                            "${dateFormatter.format(nextApp.date)}",
+                            dateFormatter.format(nextApp.date),
                             style: const TextStyle(
                               fontSize: 12,
                               color: Colors.grey,
@@ -502,10 +551,6 @@ class _DynamicAppointmentsSection extends StatelessWidget {
       ],
     );
   }
-}
-
-extension on Object? {
-  get date => null;
 }
 
 /// ——— DYNAMIC Today’s Medications Section ———

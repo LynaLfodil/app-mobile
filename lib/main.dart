@@ -12,13 +12,11 @@ import 'package:carecaps2/view/home/appointments_view.dart';
 import 'package:carecaps2/view/home/medication_view.dart';
 import 'package:carecaps2/view/home/messages_view.dart';
 import 'package:carecaps2/view/home/mrecords_view.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // ⬇️ Notification-related imports
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();

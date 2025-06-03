@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:carecaps2/common/color_extention.dart';
 import 'package:carecaps2/services/firestore_service.dart' as fs_service;
-import 'package:carecaps2/view/lib/models/appointments.dart';
+
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
@@ -13,7 +13,7 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:fluttertoast/fluttertoast.dart';
 
 class AppointmentsView extends StatefulWidget {
-  const AppointmentsView({Key? key}) : super(key: key);
+  const AppointmentsView({super.key});
   @override
   _AppointmentsViewState createState() => _AppointmentsViewState();
 }
@@ -163,18 +163,6 @@ class _AppointmentsViewState extends State<AppointmentsView> {
     );
   }
 
-  String _formatTimeLeft(Duration diff) {
-    if (diff.isNegative) return "Now";
-    if (diff.inDays > 0) {
-      return "${diff.inDays}d ${diff.inHours % 24}h";
-    } else if (diff.inHours > 0) {
-      return "${diff.inHours}h ${diff.inMinutes % 60}m";
-    } else if (diff.inMinutes > 0) {
-      return "${diff.inMinutes}m ${diff.inSeconds % 60}s";
-    } else {
-      return "${diff.inSeconds}s";
-    }
-  }
 
   @override
   Widget build(BuildContext context) {

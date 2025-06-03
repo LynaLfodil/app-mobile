@@ -1,4 +1,4 @@
-library data_repo;
+library;
 
 export 'src/entities/entities.dart';
 export 'src/models/models.dart';
